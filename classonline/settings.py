@@ -11,9 +11,14 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# 加入环境变量 优化导入
+sys.path.insert(0, BASE_DIR)
+sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -54,7 +59,7 @@ ROOT_URLCONF = 'classonline.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,12 +80,85 @@ WSGI_APPLICATION = 'classonline.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'classonline',
+        'USER': 'yejue',
+        'PASSWORD': 'yejue@123',
+        'PORT': '3306',
+        'HOST': '172.16.8.128'
     }
 }
 
+# Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': [
+            'redis://127.0.0.1:6379/0'
+        ],
+        'option': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+        }
+    },
+    'session': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': [
+            'redis://127.0.0.1:6379/1'
+        ],
+        'option': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+        }
+    }
+}
+# session 存储缓存设置
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'session'
 
+# 配置日志器，记录网站的日志信息
+LOGGING = {
+    # 版本
+    'version': 1,
+    # 是否禁用已存在的日志器
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(lineno)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(module)s %(lineno)d %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, "logs/logs.log"),  # 日志文件的位置，必须先手动创建这个logs文件夹
+            # 单个日志文件最大字节数
+            'maxBytes': 300 * 1024 * 1024,
+            # 日志文件个数
+            'backupCount': 10,
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {  # 定义了一个名为django的日志器
+            'handlers': ['console', 'file'],
+            'propagate': True,
+            'level': 'INFO',  # 日志器接收的最低日志级别
+        },
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -103,9 +181,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -118,3 +196,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# 静态文件
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
