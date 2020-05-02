@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'user',
     'course',
     'news',
-    'doc'
+    'doc',
+    'verification',
 ]
 
 MIDDLEWARE = [
@@ -205,3 +206,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+# 修改了 User 模型, 格式为 app.model， 注明 User 模型的导入路径
+AUTH_USER_MODEL = 'user.User'
