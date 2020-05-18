@@ -13,7 +13,6 @@ $(
 
 let isUsernameReady = false,    // 用户名状态
     isPasswordReady = false,     // 密码状态
-    isImageCodeReady = false,    // 图形验证码
     isMobileReady = false,       // 手机号
     isSmsCodeReady = false;       // 短信验证码
 
@@ -37,7 +36,7 @@ function checkUsername() {
 
     // 发送ajax
     $.ajax({
-        url: '/user/check=' + $sUsername + '/',
+        url: '/veri/check=' + $sUsername + '/',
         type: 'GET',
         dataType: 'JSON',
         success: function (res) {
@@ -54,26 +53,38 @@ function checkUsername() {
     })
 }
 
-// 密码校验是否相同
 
-let $pwdRepeat = $('input[name="password_repeat"]');
-$pwdRepeat.blur(passwd_repeat);
+// 密码
+let $password = $('#pwd'),
+    $passwordRepeat = $('input[name="password_repeat"]');
 
-function passwd_repeat() {
-    // 状态变更
+$password.blur(password_format);
+$passwordRepeat.blur(password_equal);
+
+// 密码格式校验
+function password_format(){
+    if (!(/^.{5,20}$/).test($password.val())){
+        message.showError('密码格式必须为5~20位字符串')
+    }
+}
+// 两次密码是否一致
+function password_equal(){
     isPasswordReady = false;
-
-    let $password = $('#pwd').val(),
-        $sPwdRepeat = $pwdRepeat.val();
-
-    if (!($password === $sPwdRepeat)) {
-        message.showError('两次输入的密码不一致，请确认后输入')
-    } else {
+    if (!$passwordRepeat.val()){
+        message.showError('密码不能为空')
+        return
+    }
+    if (!(/^.{5,20}$/).test($password.val())){
+        message.showError('密码格式必须为5~20位字符串')
+        return
+    }
+    if ($password.val() !== $passwordRepeat.val()){
+        message.showError('两次输入的密码不正确，请重新输入')
+    }else{
         isPasswordReady = true
     }
 
 }
-
 // 手机号校验是否存在
 
 let $mobile = $('#mobile');
@@ -94,7 +105,7 @@ function checkMobile() {
 
     // 发送ajax
     $.ajax({
-        url: '/user/mobile=' + $sMobile + '/',
+        url: '/veri/mobile=' + $sMobile + '/',
         type: 'GET',
         dataType: 'JSON',
     })
@@ -102,7 +113,7 @@ function checkMobile() {
             if (res['data']['count'] !== 0) {
                 message.showError('手机号已被注册')
             } else {
-                isUsernameReady = true;
+                isMobileReady = true;
             }
         })
         .fail(
@@ -113,3 +124,120 @@ function checkMobile() {
 }
 
 
+// 发送短信验证码
+let $sms_captcha = $('.sms-captcha');
+$sms_captcha.click(smsButton);
+
+function smsButton() {
+    // 取得手机号
+    // 取得图形验证码
+    let $sImageCaptcha = $('#input_captcha').val();
+    if (!$sImageCaptcha) {
+        message.showError('图形验证码不能为空');
+        return
+    }
+
+    if (!isMobileReady) {
+        checkMobile();
+        return
+    }
+
+
+    // 发送ajax
+    $.ajax({
+        url: '/veri/sms_code/',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+            mobile: $sMobile,
+            captcha: $sImageCaptcha
+        }
+    })
+        .done(function (res) {
+            if (res['error'] != 0) {
+                message.showError(res['errmsg'])
+            } else {
+                $sms_captcha.attr('disabled', true);
+                var num = 60;
+                let t = setInterval(function () {
+                    $sms_captcha[0].innerText = num;
+                    if (num === 1) {
+                        clearInterval(t);
+                        $sms_captcha[0].innerText = '获取验证码';
+                        $sms_captcha.removeAttr('disabled');
+                    }
+                    num--;
+                }, 1000)
+            }
+        })
+        .fail(
+            function () {
+                message.showError('服务器超时请重试')
+            }
+        )
+}
+
+// 注册功能
+let $registerBtn = $('.register-btn');
+$registerBtn.click(registerFn);
+
+let $sms_input = $('#input_smscode')
+$sms_input.blur(smsInput)
+
+function smsInput() {
+    isSmsCodeReady = false;
+
+    if ($sms_input.val()){
+        isSmsCodeReady = true
+    }else{
+        message.showError('请输入短信验证码');
+    }
+}
+
+function registerFn(e) {
+    e.preventDefault();
+
+    if (!isUsernameReady) {
+        checkUsername();
+        return
+    } else if (!isPasswordReady) {
+        password_equal();
+        return;
+    } else if (!isMobileReady) {
+        checkMobile();
+        return
+    } else if (!isSmsCodeReady) {
+        smsInput()
+        return
+    }
+
+    $.ajax({
+        url: '/user/register/',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+            username: $sUsername,
+            password: $password.val(),
+            password_repeat: $passwordRepeat.val(),
+            sms_code: $('#input_smscode').val(),
+            mobile: $sMobile
+
+        }
+    })
+        .done(function (res) {
+            if (res['error'] != 0) {
+                message.showError(res['errmsg'])
+            } else {
+                message.showSuccess('注册成功，即将跳转至登录页面')
+                // 跳转到登录页面
+                setTimeout(()=>{
+                    window.location.href = '/user/login'
+                }, 1500)
+            }
+        })
+        .fail(
+            function () {
+                message.showError('服务器超时请重试')
+            }
+        )
+}
