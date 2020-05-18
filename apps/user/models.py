@@ -15,6 +15,7 @@ class UserManager2(UserManager):
 class User(AbstractUser):
     """
     自定义User抽象模型，添加 email， email_active 字段
+    AbstractUser原本已包含提示: username, first_name, last_name, email, is_active
     """
     mobile = models.CharField(verbose_name='手机号', max_length=11, unique=True, help_text='手机号',
                               error_messages={'unique': '此手机号已被注册'})
