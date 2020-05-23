@@ -1,9 +1,12 @@
+import re
 from django import forms
+from django.contrib.auth import login
+from django.db.models import Q
 from django.core.validators import RegexValidator
 from django_redis import get_redis_connection
 
-from .constants import *
 from .models import User
+from .constants import *
 from verification.forms import mobile_validator
 
 # 用户名限制 5~20个字母或数字
@@ -76,5 +79,55 @@ class RegisterForm(forms.Form):
         real_sms_code = redis_conn.get('sms_text_{}'.format(mobile))
         if not real_sms_code and sms_code != real_sms_code:
             raise forms.ValidationError('短信验证码错误')
+
+        return cleaned_data
+
+
+class LoginForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super(LoginForm, self).__init__(*args, **kwargs)
+
+    account = forms.CharField(error_messages={'required': '请输入正确的用户名或密码'})
+
+    password = forms.CharField(label='密码', max_length=MAX_PASSWORD_LENGTH, min_length=MIN_PASSWORD_LENGTH,
+                               error_messages={
+                                   'max_length': '密码长度错误',
+                                   'min_length': '密码长度错误',
+                                   'required': '密码不能为空',
+                               })
+    remember = forms.BooleanField(required=False)
+
+    def clean_account(self):
+        account = self.cleaned_data.get('account')
+        if not re.match('^1[3-9]\d{9}$', account) and (len(account) <
+                                                       MIN_PASSWORD_LENGTH or len(account)> MAX_PASSWORD_LENGTH):
+            raise forms.ValidationError('用户名或密码输入错误')
+        return account
+
+    def clean(self):
+        cleaned_data = super().clean()
+        account = cleaned_data.get('account')
+        password  = cleaned_data.get('password')
+        remember = cleaned_data.get('remember')
+
+        # 找到用户，校验密码
+        user_querySet = User.objects.filter(Q(username=account) or Q(mobile=account))
+        if user_querySet:
+            user = user_querySet.first()
+            if user.check_password(password):
+                # 是否免登陆
+                if remember:
+                    # 免登陆 7 天
+                    self.request.session.set_expiry(REMENBER_LOGIN_TIME * 24 * 60 * 60)
+                else:
+                    # 默认登录30分钟
+                    self.request.session.set_expiry(DEFAULT_LOGIN_TIME * 24 * 60 * 60)
+                login(self.request, user)
+            else:
+                raise forms.ValidationError('用户名或密码输入错误')
+        else:
+            raise forms.ValidationError('用户名或密码输入错误')
 
         return cleaned_data
