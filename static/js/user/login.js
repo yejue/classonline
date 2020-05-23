@@ -5,29 +5,29 @@ let isAccountReady = false,    // 用户名状态
 
 // 用户名校验 onblur
 let $account = $('input[name="account"]');
-$account.blur(checkAccount);
 
-function checkAccount() {
+function checkAccount(msg='') {
     isAccountReady = false;
     // 取得用户名
     $sAccount = $account.val();
 
     if (!$sAccount) {
-        message.showError('用户名不能为空');
-        return
+        if(msg){
+            message.showError(msg)
+        }
     } else if (!(/^\w{5,20}$/).test($sAccount)) {
         message.showError('请输入5~20位的字母或数字用户名');
-        return
-    }
+    }}
 // 密码
 let $password = $('input[name="password"]');
-$password.blur(checkLoginPassword);
 
 // 密码校验
-function checkLoginPassword(){
+function checkLoginPassword(msg=''){
     isPasswordReady = false;
     if (!$password.val()){
-        message.showError('密码不能为空');
+        if(msg){
+            message.showError(msg)
+        }
     }else{
         isPasswordReady = true
     }
@@ -41,10 +41,11 @@ $loginBtn.click(loginFn);
 function loginFn(e) {
     e.preventDefault();
     if (!isAccountReady) {
-        checkAccount();
+        checkAccount('用户名或密码不能为空');
+        return
     } else if (!isPasswordReady) {
-        checkLoginPassword();
-    }
+        checkLoginPassword('用户名或密码不能为空');
+        return
     }
 
     $.ajax({
@@ -52,12 +53,12 @@ function loginFn(e) {
         type: 'POST',
         dataType: 'JSON',
         data: {
-            account: $sAccount,
+            account: $account.val(),
             password: $password.val(),
         }
     })
         .done(function (res) {
-            if (res['error'] != 0) {
+            if (res['error'] !== 0) {
                 message.showError(res['errmsg'])
             } else {
                 message.showSuccess('登录成功，正在跳转')
