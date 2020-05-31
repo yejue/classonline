@@ -9,7 +9,7 @@ from django_redis import get_redis_connection
 from user.models import User
 from utils.res_code import Code, error_map
 from utils.captcha import captcha
-from utils.genCheckJson import genCheckJson
+from utils.genJsonResponse import json_response
 from . import constants
 from .forms import CheckImageForm
 from utils.yuntongxun.sms import CCP
@@ -19,6 +19,7 @@ from utils.yuntongxun.sms import CCP
 
 # 日志器
 logger = logging.getLogger('django')
+
 
 def image_code_view(request):
     """
@@ -52,7 +53,7 @@ def check_username_view(request, username):
             "count": User.objects.filter(username=username).count()     # 查询用户数量
         }
 
-    return JsonResponse(genCheckJson(data=data), charset='utf8')
+    return json_response(data=data)
 
 
 def check_mobile_view(request, mobile):
@@ -68,7 +69,7 @@ def check_mobile_view(request, mobile):
         'mobile': mobile,
         'count': User.objects.filter(mobile=mobile).count()
     }
-    return JsonResponse(genCheckJson(data=data), charset='utf8')
+    return json_response(data=data)
 
 
 class SmsCodeView(View):
@@ -118,15 +119,15 @@ class SmsCodeView(View):
                 pl.setex(sms_text_key, constants.SMS_CODE_EXPIRES*60, sms_code)
                 # 让管道通知 redis 执行
                 pl.execute()
-                return JsonResponse(genCheckJson(errmsg='短信验证码发送成功'))
+                return json_response(errmsg='短信验证码发送成功')
             except Exception as e:
                 logger.error('redis 执行异常{}'.format(e))
-                return JsonResponse(genCheckJson(errorno=Code.UNKOWNERR, errmsg=error_map[Code.UNKOWNERR]))
+                return json_response(errorno=Code.UNKOWNERR, errmsg=error_map[Code.UNKOWNERR])
 
         else:
             # 将表单错误信息进行拼接
             err_msg_str = '/'.join([item[0] for item in form.errors.values()])
 
-            return JsonResponse(genCheckJson(errorno=Code.PARAMERR, errmsg=err_msg_str), charset='utf8')
+            return json_response(errorno=Code.PARAMERR, errmsg=err_msg_str)
 
 
