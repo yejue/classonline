@@ -108,6 +108,25 @@
     padding: 3px 0;
 }
 
+.please-login-comment input{
+    width: 660px;
+    height: 64px;
+    margin-top: 10px;
+}
+.please-login-comment button{
+    position: relative;
+    top: 25px;
+}
+.logged-comment input{
+    width: 660px;
+    height: 64px;
+    margin-top: 10px;
+}
+.logged-comment button{
+    position: relative;
+    top: 25px;
+}
+
 /* ================= main end ================= */
 /* ========= 为父评论添加样式 start============ */
 .left_float{
