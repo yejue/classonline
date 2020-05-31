@@ -23,7 +23,7 @@ class User(AbstractUser):
     email_active = models.BooleanField(verbose_name='邮箱状态', default=False)
 
     class Meta:
-        db_table = 'cls_user'                    # 指定迁移时的表名
+        db_table = 'tb_user'                    # 指定迁移时的表名
         verbose_name = '用户'                    # 在admin站点中的显示名称
         verbose_name_plural = verbose_name      # 复数
 
