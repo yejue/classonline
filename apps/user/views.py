@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from .forms import RegisterForm, LoginForm
 from .models import User
 from utils.res_code import Code, error_map
-from utils.genCheckJson import genCheckJson
+from utils.genJsonResponse import json_response
 
 
 # Create your views here.
@@ -25,12 +25,12 @@ class Login(View):
         # 1.校验数据
         form = LoginForm(request.POST, request=request)
         if form.is_valid():
-            return JsonResponse(genCheckJson(errorno=Code.OK, errmsg='登录成功'))
+            return json_response(errorno=Code.OK, errmsg='登录成功')
         else:
             # 将表单错误信息进行拼接
             err_msg_str = '/'.join([item[0] for item in form.errors.values()])
 
-            return JsonResponse(genCheckJson(errorno=Code.PARAMERR, errmsg=err_msg_str), charset='utf8')
+            return json_response(errorno=Code.PARAMERR, errmsg=err_msg_str)
 
 
 class LogoutView(View):
@@ -62,9 +62,9 @@ class Register(View):
             mobile = form.cleaned_data.get('mobile')
             # 新建用户
             User.objects.create_user(username=username, password=password, mobile=mobile)
-            return JsonResponse(genCheckJson(errmsg='注册成功'))
+            return json_response(errmsg='注册成功')
         else:
             # 将表单错误信息进行拼接
             err_msg_str = '/'.join([item[0] for item in form.errors.values()])
 
-            return JsonResponse(genCheckJson(errorno=Code.PARAMERR, errmsg=err_msg_str), charset='utf8')
+            return json_response(errorno=Code.PARAMERR, errmsg=err_msg_str)
