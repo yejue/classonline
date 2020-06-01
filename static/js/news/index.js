@@ -117,11 +117,11 @@ $(() => {
                         res.data.news.forEach(function (one_news) {
                             let content = `
               <li class="news-item">
-                 <a href="http://172.16.8.128:8000/news/${one_news.id}" class="news-thumbnail" target="_blank">
+                 <a href="/news/${one_news.id}" class="news-thumbnail" target="_blank">
                     <img src="${one_news.image_url}" alt="${one_news.title}" title="${one_news.title}">
                  </a>
                  <div class="news-content">
-                    <h4 class="news-title"><a href="http://172.16.8.128:8000/news/${one_news.id}">${one_news.title}</a></h4>
+                    <h4 class="news-title"><a href="/news/${one_news.id}">${one_news.title}</a></h4>
                     <p class="news-details">${one_news.digest}</p>
                     <div class="news-other">
                       <span class="news-type">${one_news.tag_name}</span>
@@ -219,13 +219,13 @@ function fn_load_banner() {
                 res.data.banners.forEach(function (one_banner, index) {
                     if (index === 0) {
                         content = `
-                <li style="display:block;"><a href="javascript:void(0);">
+                <li style="display:block;"><a href="/news/${one_banner.news_id}">
                  <img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
               `;
                         tab_content = `<li class="active"></li>`;
                     } else {
                         content = `
-              <li><a href="javascript:void(0);"><img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
+              <li><a href="/news/${one_banner.news_id}"><img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
               `;
                         tab_content = `<li></li>`;
                     }

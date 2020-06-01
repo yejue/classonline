@@ -18,10 +18,7 @@
 
 
             </ul>
-            <a href="javascript:void(0);" class="btn prev">
-                <i class="PyWhich py-arrow-left"></i></a>
-            <a href="javascript:void(0);" class="btn next">
-                <i class="PyWhich py-arrow-right"></i></a>
+
             <ul class="tab">
                 <!-- 按钮数量必须和图片一致 -->
 
@@ -36,7 +33,7 @@
           <ul class="recommend-news">
               {% for item in hot_news %}
                   <li>
-                      <a href="http://172.16.8.128:8000/news/{{ item.news.id }}" target="_blank">
+                      <a href="{% url 'news:news_detail' item.news_id %}" target="_blank">
                           <div class="recommend-thumbnail">
                               <img src="{{ item.news.image_url }}" alt="title">
                           </div>
