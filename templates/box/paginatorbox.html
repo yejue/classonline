@@ -1,0 +1,65 @@
+{% load news_template_filters %}
+<!-- paginator start-->
+<div class="page-box" id="pages">
+    <div class="pagebar" id="pageBar">
+        <a href="" class="al">
+            {{ page.paginator.count|default:0 }} 条
+        </a>
+
+        <!-- prev page start-->
+        {% if page.has_previous %}
+            {% if query %}
+                <a href="{% url 'news:search' %}?page={{ page.previous_page_number }}&q={{ query }}"
+                   class="prev">
+                    <button>上一页</button>
+                </a>
+            {% else %}
+                <a href="{% url 'news:search' %}?page={{ page.previous_page_number }}"
+                   class="prev">
+                    <button>上一页</button>
+                </a>
+            {% endif %}
+        {% endif %}
+        <!-- prev page end-->
+        <!-- page bar start-->
+        {% if page.has_previous or page.has_next %}
+            {% for n in page|page_bar %}
+                {% if n == page.number %}
+                    <span class="point"><label for="text">{{ n }}</label></span>
+                {% elif n == '...' %}
+                    <span class="point"><button>{{ n }}</button></span>
+                {% else %}
+                    {% if query %}
+                        <a href="{% url 'news:search' %}?page={{ n }}&q={{ query }}">
+                            <span class="point"><button>{{ n }}</button></span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'news:search' %}?page={{ n }}">
+                            <span class="point"><button>{{ n }}</button></span>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <!-- page bar end-->
+
+        <!-- next page start-->
+        {% if page.has_next %}
+            {% if query %}
+                <a href="{% url 'news:search' %}?page={{ page.next_page_number }}&q={{ query }}"
+                   class="prev">
+                    <button>下一页</button>
+                </a>
+            {% else %}
+
+                <a href="{% url 'news:search' %}?page={{ page.next_page_number }}"
+                   class="prev">
+                    <button>下一页</button>
+                </a>
+            {% endif %}
+        {% endif %}
+        <!-- next page end-->
+    </div>
+</div>
+<!-- paginator end-->
