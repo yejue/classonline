@@ -4,6 +4,8 @@ from django.db.models import F
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.views import View
+from haystack.generic_views import SearchView
+from django.conf import settings
 from django.http import HttpResponseNotFound
 
 from .models import Tag, News, HotNews, Banner, Comments
@@ -169,5 +171,50 @@ class NewsCommentView(View):
         return json_response(data=new_comment.to_dict_data())
 
 
-def search(request):
-    return render(request, 'news/search.html')
+class NewsSearchView(SearchView):
+    """
+    新闻搜素视图
+    url： news/search
+    """
+    # 配置搜索模板文件
+    template_name = 'news/search.html'
+
+    def get(self, request, *args, **kwargs):
+
+        # 获取查询参数
+        query = request.GET.get('q')
+        # 如果没有查询参数，返回热门新闻
+        if not query:
+            hot_news = HotNews.objects.select_related('news__tag')\
+                .only('news__title', 'news__image_url', 'news_id', 'news__tag__name').filter(is_delete=False).order_by(
+                'priority', '-news__clicks'
+            )
+            # 分页
+            paginator = Paginator(hot_news, settings.HAYSTACK_SEARCH_RESULTS_PER_PAGE)
+            try:
+                page = paginator.get_page(int(request.GET.get('page')))
+            except Exception as e:
+                page = paginator.get_page(1)
+
+            return render(request, self.template_name, context={
+                'page': page,
+                'query': query
+            })
+        else:
+            # 如果有查询参数
+            return super(NewsSearchView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        """
+        在context中添加变量page
+        :param self:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        context = super().get_context_data(*args, **kwargs)
+        if context['page_obj']:
+            context['page'] = context['page_obj']
+
+        return context
+
