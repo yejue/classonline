@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'news',
     'doc',
     'verification',
+    'haystack',
 ]
 
 MIDDLEWARE = [
@@ -223,3 +224,21 @@ AUTH_USER_MODEL = 'user.User'
 # MEDIA 静态文件
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# haystack 搜索引擎配置
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://172.16.8.128:9200',
+        'INDEX_NAME': 'classonline'
+    }
+}
+
+# haystack 配置
+# 搜索结果每页显示数量
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5
+# 实时更新 index
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+# 站点域名和端口配置 用于拼接url等
+SITE_DOMAIN_PORT = "http://172.16.8.128:8000"
