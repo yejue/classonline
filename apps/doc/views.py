@@ -14,6 +14,8 @@ logger = logging.getLogger('django')
 
 def doc_index(request):
     """
+    文档列表视图
+    url: ''
     """
     docs = Doc.objects.defer('author', 'create_time', 'update_time', 'is_delete').filter(is_delete=False)
     return render(request, 'doc/docDownload.html', locals())
@@ -21,6 +23,8 @@ def doc_index(request):
 
 class DocDownload(View):
     """
+    文档下载功能
+    url: doc/<int:doc_id>
     """
 
     def get(self, request, doc_id):
