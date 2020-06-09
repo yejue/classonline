@@ -32,7 +32,7 @@ $(function () {
                 "parent_id": parent_id
             };
             $.ajax({
-                url: "/news/" + news_id + "/comment/",
+                url: news_id + "/comment/",
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(sDataParams),
@@ -96,7 +96,7 @@ $(function () {
     // 点击评论框，重定向到用户登录页面
     $loginComment.click(function () {
         $.ajax({
-            url: "/news/" + $(".please-login-comment").attr('news-id') + "/comment/",
+            url: $(".please-login-comment").attr('news-id') + "/comment/",
             type: "POST",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -136,7 +136,7 @@ $(function () {
             "content": content
         };
         $.ajax({
-            url: "/news/" + news_id + "/comment/",
+            url: news_id + "/comment/",
             type: "POST",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(sDataParams),

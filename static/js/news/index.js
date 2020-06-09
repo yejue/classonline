@@ -83,7 +83,7 @@ $(() => {
             // 创建ajax请求
             $.ajax({
                 // 请求地址
-                url: "/news/news/",
+                url: "news/",
                 // 请求方式
                 type: "GET",
                 data: sDataParams,
@@ -117,7 +117,7 @@ $(() => {
                         res.data.news.forEach(function (one_news) {
                             let content = `
               <li class="news-item">
-                 <a href="/news/${one_news.id}" class="news-thumbnail" target="_blank">
+                 <a href="${one_news.id}" class="news-thumbnail" target="_blank">
                     <img src="${one_news.image_url}" alt="${one_news.title}" title="${one_news.title}">
                  </a>
                  <div class="news-content">
@@ -207,7 +207,7 @@ $banner.hover(function () {
 function fn_load_banner() {
     $.ajax({
         // 请求地址
-        url: "/news/banners/",
+        url: "banners/",
         // 请求方式
         type: "GET",
         async: false
@@ -219,13 +219,13 @@ function fn_load_banner() {
                 res.data.banners.forEach(function (one_banner, index) {
                     if (index === 0) {
                         content = `
-                <li style="display:block;"><a href="/news/${one_banner.news_id}">
+                <li style="display:block;"><a href="${one_banner.news_id}">
                  <img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
               `;
                         tab_content = `<li class="active"></li>`;
                     } else {
                         content = `
-              <li><a href="/news/${one_banner.news_id}"><img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
+              <li><a href="${one_banner.news_id}"><img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
               `;
                         tab_content = `<li></li>`;
                     }
