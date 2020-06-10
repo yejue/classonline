@@ -117,7 +117,7 @@ class LoginForm(forms.Form):
         print(user_querySet.first().password)
         if user_querySet:
             user = user_querySet.first()
-            if user.check_password(password) or password==user.password:
+            if user.check_password(password):
                 # 是否免登陆
                 if remember:
                     # 免登陆 7 天
