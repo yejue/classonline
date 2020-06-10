@@ -9,7 +9,7 @@ class UserManager2(UserManager):
     """
     def create_superuser(self, username, password, email=None, **extra_fields):
         # 复写父类传入值，其余不变
-        super(UserManager2, self).create_superuser(username, password, email, **extra_fields)
+        super(UserManager2, self).create_superuser(username=username, password=password, email=email, **extra_fields)
 
 
 class User(AbstractUser):
