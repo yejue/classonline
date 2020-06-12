@@ -1,8 +1,7 @@
 import random
 import logging
 
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.views import View
 from django_redis import get_redis_connection
 
@@ -129,5 +128,8 @@ class SmsCodeView(View):
             err_msg_str = '/'.join([item[0] for item in form.errors.values()])
 
             return json_response(errorno=Code.PARAMERR, errmsg=err_msg_str)
+
+
+
 
 

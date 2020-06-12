@@ -28,6 +28,10 @@ body {
     height: 64px;
     float: left;
 }
+#header .header-contain .logo .logo-text {
+    display: block;
+    font-size: 30px;
+}
 .header-contain .logo .logo-title {
     display: block;
     font-size: 0;
