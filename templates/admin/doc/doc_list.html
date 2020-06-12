@@ -1,0 +1,29 @@
+{% extends 'admin/base/obj_list.html' %}
+{% block add_button %}
+     <button type="button" class="btn btn-primary btn-sm"
+                            data-url="{% url 'admin:doc_add' %}">添加
+                    </button>
+{% endblock %}
+{% block table_content %}
+    <tr>
+        <th>#</th>
+        <th>标题</th>
+        <th>简介</th>
+        <th>图片</th>
+        <th>作者</th>
+        <th>文件地址</th>
+        <th>逻辑删除</th>
+    </tr>
+    {% for obj in page_obj %}
+        <tr>
+            <td style="width: 40px" data-url="{% url 'admin:doc_update' obj.id %}"><a
+                    href="#">{{ forloop.counter }}</a></td>
+            <td>{{ obj.title }}</td>
+            <td style="width: 200px">{{ obj.desc }}</td>
+            <td><img src="{{ obj.image_url }}" alt="" style="width: 80px;height: 20px"></td>
+            <td>{{ obj.author.username }}</td>
+            <td>{{ obj.file_url }}</td>
+            <td>{% if obj.is_delete %}是{% else %}否{% endif %}</td>
+        </tr>
+    {% endfor %}
+{% endblock %}

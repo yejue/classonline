@@ -17,6 +17,7 @@
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect. -->
     <link rel="stylesheet" href="{% static 'css/admin/skin-blue.min.css' %}">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -67,7 +68,7 @@
 
                                 <p>
                                     {{ user.username }} - Web 开发工程师
-                                    <small>入职日期}</small>
+                                    <small>上一次登录{{ user.last_login|date:'Y/m/d' }}</small>
                                 </p>
                             </li>
                             <!-- Menu Footer-->
@@ -76,7 +77,7 @@
                                     <a href="#" class="btn btn-default btn-flat">个人信息</a>
                                 </div>
                                 <div class="pull-right">
-                                    <a href="#" class="btn btn-default btn-flat">退出</a>
+                                    <a href="{% url 'user:logout' %}" class="btn btn-default btn-flat">退出</a>
                                 </div>
                             </li>
                         </ul>

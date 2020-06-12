@@ -1,0 +1,3 @@
+{% extends 'admin/base/obj_detail.html' %}
+{% block update_url %}{% url 'admin:news_tag_update' form.instance.id %}{% endblock %}
+{% block add_url %}{% url 'admin:news_tag_add' %}{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'admin/base/obj_list.html' %}
+{% block add_button %}
+    <button type="button" class="btn btn-primary btn-sm"
+                            data-url="{% url 'admin:hotnews_add' %}">添加
+                    </button>
+{% endblock %}
+{% block table_content %}
+    <tr>
+        <th>#</th>
+        <th>标题</th>
+        <th>类别</th>
+        <th>优先级</th>
+        <th>逻辑删除</th>
+    </tr>
+    {% for obj in page_obj %}
+        <tr>
+            <td style="width: 40px" data-url="{% url 'admin:hotnews_update' obj.id %}"><a
+                    href="#">{{ forloop.counter }}</a></td>
+            <td>{{ obj.news.title }}</td>
+            <td>{{ obj.news.tag.name }}</td>
+            <td>{{ obj.priority }}</td>
+            <td>{% if obj.is_delete %}是{% else %}否{% endif %}</td>
+        </tr>
+    {% endfor %}
+{% endblock %}

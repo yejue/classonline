@@ -11,10 +11,13 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import Permission, ContentType, Group
 
 from .forms import MenuModelForm
-from news.models import News, Tag
+from .generic import *
+from news.models import *
+from course.models import *
+from doc.models import *
 from .models import Menu
 from .forms import UserModelForm, GroupModeForm, NewsModelForm
-from user.models import User
+from user.models import *
 from utils.genJsonResponse import json_response
 from utils.res_code import Code, error_map
 from utils.ck_uploader.funcs import get_filename
@@ -23,7 +26,7 @@ from .constants import ORDER_BY_GROUP_PER_PAGE_COUNT
 logger = logging.getLogger('django')
 
 
-class MyPermissionRequiredMinxin(PermissionRequiredMixin):
+class MyPermissionRequiredMixin(PermissionRequiredMixin):
 
     def has_permission(self):
         """
@@ -106,7 +109,7 @@ class WaitView(View):
         return render(request, 'admin/wait.html')
 
 
-class MenuListView(MyPermissionRequiredMinxin, View):
+class MenuListView(MyPermissionRequiredMixin, View):
     """
     菜单列表视图
     url:/admin/menus/
@@ -120,7 +123,7 @@ class MenuListView(MyPermissionRequiredMinxin, View):
         return render(request, 'admin/menu/menu_list.html', context={'menus': menus})
 
 
-class MenuAddView(MyPermissionRequiredMinxin, View):
+class MenuAddView(MyPermissionRequiredMixin, View):
     """
     添加菜单视图
     url:/admin/menu/
@@ -146,7 +149,7 @@ class MenuAddView(MyPermissionRequiredMinxin, View):
             return render(request, 'admin/menu/add_menu.html', context={'form': form})
 
 
-class MenuUpdateView(MyPermissionRequiredMinxin, View):
+class MenuUpdateView(MyPermissionRequiredMixin, View):
     """
     菜单管理视图
     url:/admin/menu/<int:menu_id>/
@@ -518,3 +521,178 @@ class NewsAddView(View):
             return json_response(errmsg='添加新闻成功！')
         else:
             return render(request, 'admin/news/news_detail.html', context={'form': form})
+
+
+class TagListView(MyPermissionRequiredMixin, MyListView):
+    permission_required = ('admin2.news_tag_list', )
+    model = Tag
+    page_header = '系统设置'
+    page_option = '新闻标签管理'
+    table_title = '新闻标签列表'
+    is_paginate = True
+
+    fields = ['name', 'is_delete']
+
+
+class TagUpdateView(MyPermissionRequiredMixin, UpdateView):
+    permission_required = ('admin2.news_tag_update',)
+    model = Tag
+
+    page_header = '系统设置'
+    page_option = '新闻标签管理'
+    table_title = '新闻标签更新'
+
+    fields = ['name', 'is_delete']
+    pk = 'tag_id'
+
+
+class TagAddView(MyPermissionRequiredMixin, AddView):
+    permission_required = ('admin2.news_tag_add', )
+    model = Tag
+
+    page_header = '系统设置'
+    page_option = '新闻标签管理'
+    table_title = '新闻标签添加'
+
+    fields = ['name', 'is_delete']
+
+
+class HotNewsListView(MyPermissionRequiredMixin, MyListView):
+    permission_required = ('admin2.hotnews_list',)
+    model = HotNews
+    page_header = '新闻管理'
+    page_option = '热门新闻管理'
+    table_title = '热门新闻列表'
+    fields = ['news__title', 'news__tag__name', 'priority', 'is_delete']
+
+    is_paginate = True
+    per_page = 5
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.select_related('news__tag').order_by('-priority')
+
+
+class HotNewsUpdateView(MyPermissionRequiredMixin, UpdateView):
+    permission_required = ('admin2.hotnews_update',)
+    model = HotNews
+
+    page_header = '新闻管理'
+    page_option = '热门新闻管理'
+    table_title = '热门新闻更新'
+    fields = ['priority', 'is_delete']
+
+
+class HotNewsAddView(MyPermissionRequiredMixin, AddView):
+    permission_required = ('admin2.hotnews_add',)
+    model = HotNews
+
+    page_header = '新闻管理'
+    page_option = '热门新闻管理'
+    table_title = '热门新闻添加'
+    fields = ['news', 'priority']
+
+
+
+class BannerListView(MyPermissionRequiredMixin, MyListView):
+
+    permission_required = ('admin2.banner_list',)
+    model = Banner
+    page_header = '新闻管理'
+    page_option = '轮播图管理'
+    table_title = '轮播图列表'
+
+    fields = ['image_url', 'priority', 'news__title', 'news__tag__name', 'is_delete']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.select_related('news__tag').order_by('-priority')
+
+
+class BannerUpdateView(MyPermissionRequiredMixin, UpdateView):
+    permission_required = ('admin2.banner_update',)
+    model = Banner
+    page_header = '新闻管理'
+    page_option = '轮播图管理'
+    table_title = '轮播图更新'
+
+    fields = ['image_url', 'priority', 'news', 'is_delete']
+
+
+class BannerAddView(MyPermissionRequiredMixin, AddView):
+    permission_required = ('admin2.banner_add',)
+    model = Banner
+    page_header = '新闻管理'
+    page_option = '轮播图管理'
+    table_title = '轮播图添加'
+
+    fields = ['image_url', 'priority', 'news', 'is_delete']
+
+
+class DocListView(MyPermissionRequiredMixin, MyListView):
+    permission_required = ('admin2.doc_list',)
+    model = Doc
+    page_header = '文档管理'
+    page_option = '文档管理'
+    table_title = '文档列表'
+
+    fields = ['title', 'desc', 'file_url', 'image_url', 'author__username', 'is_delete']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.select_related('author')
+
+
+class DocUpdateView(MyPermissionRequiredMixin, UpdateView):
+    permission_required = ('admin2.doc_update',)
+    model = Doc
+    page_header = '文档管理'
+    page_option = '文档管理'
+    table_title = '文档更新'
+
+    fields = ['title', 'desc', 'file_url', 'image_url', 'author', 'is_delete']
+
+
+class DocAddView(MyPermissionRequiredMixin, AddView):
+    permission_required = ('admin2.doc_add',)
+    model = Doc
+    page_header = '文档管理'
+    page_option = '文档管理'
+    table_title = '文档添加'
+
+    fields = ['title', 'desc', 'file_url', 'image_url', 'is_delete']
+
+    def save(self, form):
+        instance = form.save(commit=False)
+        instance.author = self.request.user
+        instance.save()
+
+
+class CourseListView(MyPermissionRequiredMixin, MyListView):
+    permission_required = ('admin2.course_list',)
+    model = Course
+    page_header = '在线课堂'
+    page_option = '课程管理'
+    table_title = '课程列表'
+
+    fields = ['title', 'category__name', 'teacher__name', 'profile', 'outline', 'duration', 'cover_url', 'is_delete']
+
+
+class CourseUpdateView(MyPermissionRequiredMixin, UpdateView):
+    permission_required = ('admin2.course_update',)
+    model = Course
+    page_header = '在线课堂'
+    page_option = '课程管理'
+    table_title = '课程更新'
+
+    fields = ['title', 'category', 'teacher', 'profile', 'outline', 'duration', 'cover_url', 'video_url']
+
+
+class CourseAddView(MyPermissionRequiredMixin, AddView):
+    permission_required = ('admin2.course_add',)
+    model = Course
+    page_header = '在线课堂'
+    page_option = '课程管理'
+    table_title = '课程添加'
+
+    fields = ['title', 'category', 'teacher', 'profile', 'outline', 'duration', 'cover_url', 'video_url']

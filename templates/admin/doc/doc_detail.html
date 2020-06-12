@@ -1,0 +1,9 @@
+{% extends 'admin/base/obj_detail.html' %}
+
+{% block update_url %}
+    {% url 'admin:doc_update' form.instance.id %}
+{% endblock %}
+
+{% block add_url %}
+    {% url 'admin:doc_add' %}
+{% endblock %}

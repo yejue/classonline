@@ -1,0 +1,197 @@
+{% load static %}
+{% load news_template_filters %}
+{% load admin_customer_tags %}
+{% load admin_customer_filters %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        {{ page_header }}
+        <small>{{ page_option }}</small>
+    </h1>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{ table_title }}</h3>
+        </div>
+        <!-- /.box-header -->
+
+        <!-- form start -->
+        <div class="box-body">
+
+            <form class="form-horizontal">
+                {% csrf_token %}
+                {% block form_content %}
+                    {% for field in form %}
+                        {% if field|is_checkbox %}
+                            <div class="form-group">
+
+                                <div class="col-sm-offset-1 col-sm-11">
+
+                                    <div class="checkbox">
+                                        <label for="{{ field.id_for_label }}">{{ field }}{{ field.label }}</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        {% elif field|is_url_field %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.id_for_label }}"
+                                       class="col-sm-1 control-label">{{ field.label }}</label>
+                                <div class="col-sm-11">
+                                    {% for error in field.errors %}
+                                        <label class="control-label"
+                                               for="{{ field.id_for_label }}">{{ error }}</label>
+                                    {% endfor %}
+                                    <div class="input-group">
+                                        {% add_class field 'form-control' %}
+                                        <span class="input-group-btn"><input class="hidden" type="file">
+                      <button type="button" class="btn btn-info btn-flat">上传文件</button>
+                    </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+
+                                <label for="{{ field.id_for_label }}"
+                                       class="col-sm-1 control-label">{{ field.label }}</label>
+
+                                <div class="col-sm-11">
+                                    {% for error in field.errors %}
+                                        <label class="control-label"
+                                               for="{{ field.id_for_label }}">{{ error }}</label>
+                                    {% endfor %}
+                                    {% add_class field 'form-control' %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endblock %}
+
+            </form>
+
+        </div>
+        <div class="box-footer">
+
+            <button type="button" class="btn btn-default back">返回</button>
+            <button type="button"
+                    {% if form.instance.id %}
+                    data-url="{% block update_url %}{% endblock %}"
+                    data-type="PUT"
+                    {% else %}
+                    data-url="{% block add_url %}{% endblock %}"
+                    data-type="POST"
+                    {% endif %}
+                    class="btn btn-primary pull-right save">保存
+            </button>
+
+
+        </div>
+
+    </div>
+
+</section>
+<!-- /.content -->
+{% block script %}
+    <script>
+        $(() => {
+            {% block back_button %}
+                // 返回按钮
+                $('.box-footer button.back').click(() => {
+                    let url = $('.sidebar-menu li.active a').data('url');
+                    if (!url) {
+                        return
+                    }
+                    $('#content').load(
+                        url,
+                        (response, status, xhr) => {
+                            if (status !== 'success') {
+                                message.showError('服务器超时，请重试！')
+                            }
+                        }
+                    );
+                });
+            {% endblock %}
+
+            {% block save_button %}
+                $('.box-footer button.save').click(function () {
+                    let url = $(this).data('url');
+                    if (!url) {
+                        return
+                    }
+                    $
+                        .ajax({
+                            url: url,
+                            data: $('form').serialize(),
+                            type: $(this).data('type')
+                        })
+                        .done((res) => {
+                            if (res['error'] === '0') {
+                                message.showSuccess(res.errmsg);
+                                $('#content').load(
+                                    $('.sidebar-menu li.active a').data('url'),
+                                    (response, status, xhr) => {
+                                        if (status !== 'success') {
+                                            message.showError('服务器超时，请重试！')
+                                        }
+                                    }
+                                );
+                            } else {
+                                $('#content').html(res)
+                            }
+                        })
+                        .fail((res) => {
+                            message.showError('服务器超时，请重试！')
+                        })
+                });
+            {% endblock %}
+
+            {% block upload %}
+                // 上传文件input
+                let $fileInput = $('.input-group-btn input');
+                let $uploadBtn = $('.input-group-btn button');
+                $uploadBtn.click(function () {
+                        $(this).prev('input[type="file"]').click()
+                    }
+                );
+                // 自动上传文件
+                $fileInput.change(function () {
+                    $this = $(this);
+                    if ($this.val() !== '') {
+                        let formData = new FormData();
+                        formData.append('upload', $this[0].files[0]);
+                        formData.append('csrfmiddlewaretoken', $('input[name="csrfmiddlewaretoken"]').val());
+                        $
+                            .ajax({
+                                url: '/admin/upload/',
+                                // 使用ckeditor_uploader 就使用下面的url
+                                // url: '/ckeditor/upload/&responseType=json',
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false
+                            })
+                            .done((res) => {
+                                if (res.data.uploaded === '1') {
+                                    message.showSuccess('封面图片上传成功！');
+                                    $this.parent().prev('input').val(res.data.url);
+                                    // 清空一下
+                                    $this.val('')
+                                } else {
+                                    message.showError('封面图片上传失败！')
+                                }
+                            })
+                            .fail(() => {
+                                message.showError('服务器超时, 请重新尝试！')
+                            })
+                    }
+                });
+            {% endblock %}
+
+        });
+    </script>
+{% endblock %}
