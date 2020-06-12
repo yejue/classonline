@@ -191,11 +191,11 @@ function auto() {
     index++;
     index %= $tabLi.length;
     $tabLi.eq(index).addClass('active').siblings('li').removeClass('active');
-    $picLi.eq(index).fadeIn(3000).siblings('li').fadeOut(3000);
+    $picLi.eq(index).fadeIn(2000).siblings('li').fadeOut(2000);
 }
 
 // 定时器
-let timer = setInterval(auto, 2000);
+let timer = setInterval(auto, 3000);
 $banner.hover(function () {
     clearInterval(timer)
 }, function () {
@@ -219,13 +219,13 @@ function fn_load_banner() {
                 res.data.banners.forEach(function (one_banner, index) {
                     if (index === 0) {
                         content = `
-                <li style="display:block;"><a href="${one_banner.news_id}">
+                <li style="display:block;"><a href="news/${one_banner.news_id}">
                  <img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
               `;
                         tab_content = `<li class="active"></li>`;
                     } else {
                         content = `
-              <li><a href="${one_banner.news_id}"><img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
+              <li><a href="news/${one_banner.news_id}"><img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
               `;
                         tab_content = `<li></li>`;
                     }
