@@ -11,7 +11,7 @@
 /* ====== banner start ======*/
 .main-contain .banner {
     width: 100%;
-    height: 200px;
+    height: 300px;
     overflow: hidden;
     position: relative;
     display: flex;
@@ -96,6 +96,7 @@
 }
 .recommend-news li .recommend-thumbnail img {
     width: 100%;
+    height: 100%;
     transition: all 300ms ease-out;
 }
 .recommend-news li .info {
