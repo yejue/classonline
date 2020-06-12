@@ -1,6 +1,8 @@
 from django.db import models
+from ckeditor_uploader.fields import RichTextUploadingField
 
 from utils.models import BaseModel
+from utils.validators import MediaUrlValidator
 
 # Create your models here.
 
@@ -27,9 +29,9 @@ class News(BaseModel):
     """
     title = models.CharField('标题', max_length=150, help_text='标题')
     digest = models.CharField('摘要', max_length=200, help_text='摘要')
-    content = models.TextField('内容', help_text='内容')
+    content = RichTextUploadingField('内容', help_text='内容')
     clicks = models.IntegerField('点击量', default=0, help_text='点击量')
-    image_url = models.URLField('图片url', default='', help_text='图片url')
+    image_url = models.CharField('图片url', default='', help_text='图片url', max_length=200, validators=[MediaUrlValidator()])
 
     tag = models.ForeignKey('Tag', on_delete=models.SET_NULL, null=True)
 
