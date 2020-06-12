@@ -196,7 +196,7 @@ class MenuUpdateView(MyPermissionRequiredMixin, View):
             return render(request, 'admin/menu/update_menu.html', context={'form': form})
 
 
-class UserListView(View):
+class UserListView(MyPermissionRequiredMixin, View):
     """
     用户列表视图
     """
@@ -249,7 +249,7 @@ class UserListView(View):
         return render(request, 'admin/user/user_list.html', context=context)
 
 
-class UserUpdateView(View):
+class UserUpdateView(MyPermissionRequiredMixin, View):
     """
     用户更新视图
     url:/admin/user/<int:user_id>
@@ -281,24 +281,24 @@ class UserUpdateView(View):
             return render(request, 'admin/user/user_detail.html', context={'form': form})
 
 
-class GroupListView(View):
+class GroupListView(MyPermissionRequiredMixin, View):
     """
     分组列表视图
     url:/admin/groups/
     """
-
+    permission_required = ('admin2.group_list', )
     def get(self, request):
         groups = Group.objects.only('name').all()
 
         return render(request, 'admin/group/group_list.html', context={'groups': groups})
 
 
-class GroupAddView(View):
+class GroupAddView(MyPermissionRequiredMixin, View):
     """
     添加分组视图
     url: /admin/group/
     """
-
+    permission_required = ('add_group',)
     def get(self, request):
         # 1. 创建一个空表单
         form = GroupModeForm()
@@ -329,12 +329,12 @@ class GroupAddView(View):
             })
 
 
-class GroupUpdateView(View):
+class GroupUpdateView(MyPermissionRequiredMixin, View):
     """
     分组更新视图
     url:/admin/group/<int:group_id>/
     """
-
+    permission_required = ('update_group', )
     def get(self, request, group_id):
         # 1. 拿到要修改的分组
         group = Group.objects.filter(id=group_id).first()
@@ -384,12 +384,12 @@ class GroupUpdateView(View):
             })
 
 
-class NewsAdminView(View):
+class NewsAdminView(MyPermissionRequiredMixin, View):
     """
     新闻列表视图
     url:admin/newsadmin/
     """
-
+    permission_required = ('news_list', )
     def get(self, request):
         queryset = News.objects.only('title', 'tag__name', 'author__username', 'is_delete').select_related('tag',
                                                                                                            'author').all()
@@ -441,11 +441,12 @@ class NewsAdminView(View):
         return render(request, 'admin/news/news_list.html', context=context)
 
 
-class NewsUpdateView(View):
+class NewsUpdateView(MyPermissionRequiredMixin, View):
     """
     新闻修改视图
     url:/admin/news/<int:news_id>/
     """
+    permission_required = ('update_news', )
     def get(self, request, news_id):
         # 1. 拿到对应的新闻对象
         news = News.objects.filter(id=news_id).first()
@@ -504,7 +505,7 @@ class UploadFileView(View):
             return json_response(data={'uploaded': '0'})
 
 
-class NewsAddView(View):
+class NewsAddView(MyPermissionRequiredMixin, View):
     """
     新闻添加视图
     """
