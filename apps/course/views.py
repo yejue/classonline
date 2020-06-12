@@ -20,7 +20,6 @@ def course_list(request):
     """
     courses = models.Course.objects.select_related('teacher').\
     only('title', 'cover_url','teacher__name', 'teacher__positional_title').filter(is_delete=False)
-    print(courses[1].cover_url)
     return render(request, 'course/course.html', context={
         'courses': courses
     })
