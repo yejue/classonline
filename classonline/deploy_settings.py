@@ -28,7 +28,7 @@ sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
 SECRET_KEY = '8+2v%gtv6-@)u)ca(m^6_kzkw@kj_%%4%!#uva3f+e+5j-g33z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -232,7 +232,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://127.0.0.1:9200',
+        'URL': 'http://yjstudy1.com:9200',
         'INDEX_NAME': 'classonline'
     }
 }

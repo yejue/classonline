@@ -191,7 +191,7 @@ function auto() {
     index++;
     index %= $tabLi.length;
     $tabLi.eq(index).addClass('active').siblings('li').removeClass('active');
-    $picLi.eq(index).fadeIn(2000).siblings('li').fadeOut(2000);
+    $picLi.eq(index).fadeIn(3000).siblings('li').fadeOut(3000);
 }
 
 // 定时器

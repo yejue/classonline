@@ -14,8 +14,8 @@ class TemplateView(View):
     """
     model = None  # 模型
     template_name = None
-    page_header = None  # 页头大标题
-    page_option = None  # 页头小标题
+    header = None  # 页头大标题
+    small_header = None  # 页头小标题
     table_title = None  # 内容标题
     fields = None  # 需要展示的字段
 
@@ -25,8 +25,8 @@ class TemplateView(View):
 
     def get_context_data(self, **kwargs):
         context = {
-            'page_header': self.page_header,
-            'page_option': self.page_option,
+            'header': self.header,
+            'small_header': self.small_header,
             'table_title': self.table_title
         }
 
