@@ -76,7 +76,9 @@ $(()=>{
                             }
                         }
                     );
-                } else {
+                } else if (res['error']==='4105'){
+                    message.showError('您没有权限！')
+                } else{
                     $('#content').html(res)
                 }
             })

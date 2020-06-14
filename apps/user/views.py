@@ -61,7 +61,8 @@ class Register(View):
             password = form.cleaned_data.get('password')
             mobile = form.cleaned_data.get('mobile')
             # 新建用户
-            User.objects.create_user(username=username, password=password, mobile=mobile)
+            user = User.objects.create_user(username=username, password=password, mobile=mobile)
+            user.groups.add(5)
             return json_response(errmsg='注册成功')
         else:
             # 将表单错误信息进行拼接

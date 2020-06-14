@@ -232,7 +232,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://yjstudy1.com:9200',
+        'URL': 'localhost:9200',
         'INDEX_NAME': 'classonline'
     }
 }
@@ -261,9 +261,9 @@ CKEDITOR_FILENAME_GENERATOR = 'utils.ck_uploader.funcs.get_filename'
 # ckeditor默认外观
 CKEDITOR_CONFIGS = {
     'default': {
-        'skin': 'moono',
+        # 'skin': 'moono',
         'width': '100%',
-        # 'skin': 'office2013',
+        'skin': 'office2013',
         'toolbar_Basic': [
             ['Source', '-', 'Bold', 'Italic']
         ],

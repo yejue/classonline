@@ -380,7 +380,7 @@ class GroupAddView(MyPermissionRequiredMixin, View):
     添加分组视图
     url: /admin/group/
     """
-    permission_required = ('add_group',)
+    permission_required = ('admin2.add_group',)
     def get(self, request):
         # 1. 创建一个空表单
         form = GroupModeForm()
@@ -416,7 +416,7 @@ class GroupUpdateView(MyPermissionRequiredMixin, View):
     分组更新视图
     url:/admin/group/<int:group_id>/
     """
-    permission_required = ('update_group', )
+    permission_required = ('admin2.update_group', )
     def get(self, request, group_id):
         # 1. 拿到要修改的分组
         group = Group.objects.filter(id=group_id).first()
@@ -471,7 +471,7 @@ class NewsAdminView(MyPermissionRequiredMixin, View):
     新闻列表视图
     url:admin/newsadmin/
     """
-    permission_required = ('news_list', )
+    permission_required = ('admin2.news_list', )
     def get(self, request):
         queryset = News.objects.only('title', 'tag__name', 'author__username', 'is_delete').select_related('tag',
                                                                                                            'author').all()
@@ -528,7 +528,10 @@ class NewsUpdateView(MyPermissionRequiredMixin, View):
     新闻修改视图
     url:/admin/news/<int:news_id>/
     """
-    permission_required = ('update_news', )
+    permission_required = {
+        'get': ('admin2.news_list', ),
+        'put': ('admin2.update_news', )
+    }
     def get(self, request, news_id):
         # 1. 拿到对应的新闻对象
         news = News.objects.filter(id=news_id).first()

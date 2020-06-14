@@ -11,6 +11,7 @@ from utils.captcha import captcha
 from utils.genJsonResponse import json_response
 from . import constants
 from .forms import CheckImageForm
+from utils.huyiwuxian.sms3 import huyisms
 from utils.yuntongxun.sms import CCP
 
 # Create your views here.
@@ -94,15 +95,15 @@ class SmsCodeView(View):
             # 生成短信验证码
             sms_code = ''.join([str(random.choice([i for i in range(10)])) for _ in range(constants.SMS_CODE_LENGTH)])
             # 发送短信验证码
-            ccp = CCP()
-            # 注意： 测试的短信模板编号为1
-            result = None
-            for i in range(3):
-                result = ccp.send_template_sms('{}'.format(mobile), ['{}'.format(sms_code), 5], "1")
-                if result == 0:
-                    print('短信验证码发送成功！')
-                    break
-
+            # ccp = CCP()
+            # # 注意： 测试的短信模板编号为1
+            # result = None
+            # for i in range(3):
+            #     result = ccp.send_template_sms('{}'.format(mobile), ['{}'.format(sms_code), 5], "1")
+            #     if result == 0:
+            #         print('短信验证码发送成功！')
+            #         break
+            result = huyisms(smscode=sms_code, mobile=mobile)
             logger.info('{}，发送验证码{}成功'.format(mobile, sms_code))
             # 保存验证码 redis
             # 创建发送验证码记录的key

@@ -10,16 +10,28 @@
 
 import requests
 import urllib3
+import json
 
 # 用户名 查看用户名请登录用户中心->验证码、通知短信->帐户及签名设置->APIID
 account = "C06666859"
 # 密码 查看密码请登录用户中心->验证码、通知短信->帐户及签名设置->APIKEY
 password = "44569c9d3a7ab60284dd00123338ab38"
-mobile = "15807561440"
-text = "您的验证码是：121254。请不要把验证码泄露给其他人。"
 
-data = {'account': account, 'password': password, 'content': text, 'mobile': mobile, 'format': 'json'}
 
-req = requests.get(url='http://106.ihuyi.com/webservice/sms.php?method=Submit', params=data)
 
-print(req.text)
+
+def huyisms(smscode, mobile):
+    mobile = mobile
+    text = "您的验证码是：{}。请不要把验证码泄露给其他人。".format(smscode)
+    data = {'account': account, 'password': password, 'content': text, 'mobile': mobile, 'format': 'json'}
+    return requests.get(url='http://106.ihuyi.com/webservice/sms.php?method=Submit', params=data)
+
+if __name__ == '__main__':
+    huyi = huyisms(1234, 18666996101)
+    json_huyi = json.loads(huyi.text)
+    print(type(json_huyi))
+    print(json_huyi['code'])
+    print(json_huyi['msg'])
+
+
+

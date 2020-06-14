@@ -317,3 +317,5 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
+Login_URL = 'user:login'

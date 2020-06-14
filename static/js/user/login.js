@@ -65,8 +65,9 @@ function loginFn(e) {
                 message.showSuccess('登录成功，正在跳转')
                 // 跳转到登录页面
                 setTimeout(()=>{
-                    if (!document.referrer | document.referrer==='/user/login'
-                        | document.referrer==='/user/register'){
+                    if (!document.referrer | document.referrer==='/user/login'){
+                        window.location.href = '/'
+                    }else if(document.referrer==='/user/register'){
                         window.location.href = '/'
                     }else{
                         window.location.href = document.referrer
