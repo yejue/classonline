@@ -1,5 +1,7 @@
 import logging
 import json
+import datetime
+import linecache
 from django.db.models import F
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
@@ -12,6 +14,7 @@ from .models import Tag, News, HotNews, Banner, Comments
 from .constants import *
 from utils.res_code import Code, error_map
 from utils.genJsonResponse import json_response
+from utils.getUserMeta import get_ip
 
 # Create your views here.
 
@@ -29,6 +32,9 @@ def index(request):
     tags = Tag.objects.filter(is_delete=False).only('name')
     hot_news = HotNews.objects.select_related('news').only('news__title', 'news__image_url', 'news_id')\
                    .filter(is_delete=False).order_by('priority', 'news__clicks')[:HOT_NEWS_COUNT]
+    user_ip = get_ip(request) or 0
+    if user_ip:
+        logger.info('有人访问{}'.format(user_ip))
     return render(request, 'news/index.html', context={
         'tags': tags,
         'hot_news': hot_news
@@ -218,3 +224,19 @@ class NewsSearchView(SearchView):
 
         return context
 
+
+def get_logger(request, d_id):
+    """
+    快速查看 logs 接口
+    :param request:
+    :param d_id:
+    :return:
+    """
+    if str(d_id) == datetime.datetime.today().strftime('%d'):
+        logs = linecache.getlines('logs/logs.log')[-20:-1] or None
+        linecache.clearcache()
+        if logs:
+            data = {'logs': logs}
+            return json_response(data=data)
+        else:
+            return json_response(errorno=Code.NODATA, errmsg='出错了')

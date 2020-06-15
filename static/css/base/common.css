@@ -21,6 +21,8 @@ body {
     background: #141414;
     color: #fff;
     line-height: 64px;
+    width: 1200px;
+    margin: auto;
 }
 /* ========= logo start ============ */
 #header .header-contain .logo {
@@ -72,6 +74,8 @@ body {
 /* ========= nav end ============ */
 /* ========= login start ============ */
 .header-contain .login-box {
+    position: relative;
+    right: 2%;
     float: right;
 }
 .login-box .py-user {
@@ -130,12 +134,15 @@ body {
 /* ================= footer start ================= */
 #footer {
     background: rgb(83, 94, 103);
+    width: 1200px;
+    margin: auto;
 }
 #footer .footer-box {
     text-align: center;
     color: #c1c1c1;
 }
 #footer .footer-box .footer-content {
+    position: relative;
     height: 120px;
     line-height: 30px;
     padding-top: 25px;
@@ -155,7 +162,7 @@ body {
     margin-right: 20px;
 }
 #footer .footer-box .copyright-desc {
-    line-height: 60px;
+    line-height: 40px;
     background: rgb(55, 60, 70);
 }
 /* ================= footer end ================= */

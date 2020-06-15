@@ -261,9 +261,9 @@ CKEDITOR_FILENAME_GENERATOR = 'utils.ck_uploader.funcs.get_filename'
 # ckeditor默认外观
 CKEDITOR_CONFIGS = {
     'default': {
-        # 'skin': 'moono',
+        'skin': 'moono',
         'width': '100%',
-        'skin': 'office2013',
+        # 'skin': 'office2013',
         'toolbar_Basic': [
             ['Source', '-', 'Bold', 'Italic']
         ],

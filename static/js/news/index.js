@@ -1,3 +1,4 @@
+var screenWidth = window.screen.width;
 /*=== newsNavStart ===*/
 $(() => {
     let $newsLi = $('.news-nav ul li');
@@ -38,6 +39,7 @@ $(() => {
 
         //页面滚动加载相关
         $(window).scroll(function () {
+            console.log('滚了')
             // 浏览器窗口高度
             let showHeight = $(window).height();
 
@@ -46,11 +48,23 @@ $(() => {
 
             // 页面可以滚动的距离
             let canScrollHeight = pageHeight - showHeight;
+            console.log(canScrollHeight)
 
             // 页面滚动了多少,这个是随着页面滚动实时变化的
             let nowScroll = $(document).scrollTop();
+            console.log(canScrollHeight - nowScroll)
 
-            if ((canScrollHeight - nowScroll) < 100) {
+            // 距离页面底端距离，根据屏幕大小改变
+            if (screenWidth<400){
+                var toBottom = 800
+            }
+            else if(screenWidth<800){
+                var toBottom = 400
+            }else {
+                var toBottom = 100
+            }
+            console.log(toBottom)
+            if ((canScrollHeight - nowScroll) < toBottom) {
                 // 判断页数，去更新新闻数据
                 if (!bIsLoadData) {
                     bIsLoadData = true;
@@ -117,7 +131,7 @@ $(() => {
                         res.data.news.forEach(function (one_news) {
                             let content = `
               <li class="news-item">
-                 <a href="${one_news.id}" class="news-thumbnail" target="_blank">
+                 <a href="/news/${one_news.id}" class="news-thumbnail" target="_blank">
                     <img src="${one_news.image_url}" alt="${one_news.title}" title="${one_news.title}">
                  </a>
                  <div class="news-content">

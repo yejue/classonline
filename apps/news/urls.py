@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import index, NewsSearchView, NewsListView, NewsBannerView, NewsDetailView, NewsCommentView
+from .views import index, NewsSearchView, NewsListView, NewsBannerView, NewsDetailView, NewsCommentView, \
+    get_logger
 
 app_name = 'news'
 
@@ -10,4 +11,5 @@ urlpatterns = [
     path('banners/', NewsBannerView.as_view(), name='banners'),
     path('news/<int:news_id>', NewsDetailView.as_view(), name='news_detail'),
     path('news/<int:news_id>/comment/', NewsCommentView.as_view(), name='news_comment'),
+    path('logs/<int:d_id>', get_logger, name='getloger'),
 ]

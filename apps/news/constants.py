@@ -1,5 +1,5 @@
 # 每页显示新闻数
-PER_PAGE_NEWS_COUNT = 5
+PER_PAGE_NEWS_COUNT = 10
 
 # 热门新闻数量
 HOT_NEWS_COUNT = 3
