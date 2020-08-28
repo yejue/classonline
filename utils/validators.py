@@ -1,6 +1,3 @@
-# !/usr/bin/env python
-# -*- coding:utf-8 -*-
-# author:心蓝 2019/9/7 20:54
 import re
 
 from django.core import validators
